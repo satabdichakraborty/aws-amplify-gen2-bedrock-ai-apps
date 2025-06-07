@@ -13,7 +13,7 @@ interface IAppConstants {
     AppDescription: string,
     TopLevelMenuItems: MenuItem[]
     Apps: App[],
-    AppGitHubUrl: string
+    AppRepoUrl: string
 }
 
 export class AppNames {
@@ -46,5 +46,5 @@ export const AppConstants: IAppConstants = {
             path: "/apps/instragram-captions-generator"
         }
     ],
-    AppGitHubUrl: "https://github.com/ankushjain358/aws-amplify-gen2-bedrock-ai-apps"
+    AppRepoUrl: "https://codecommit.aws.amazon.com/v1/repos/aws-amplify-gen2-bedrock-ai-apps"
 }
