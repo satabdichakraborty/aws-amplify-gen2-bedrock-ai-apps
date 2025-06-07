@@ -3,7 +3,7 @@ import { a } from '@aws-amplify/backend';
 // Define the Question type schema
 export const questionSchema = {
   Question: a.model({
-    QuestionId: a.string().required().primaryKey(),
+    QuestionId: a.string().required().primaryPartitionKey(),
     Status: a.string().required(),
     Type: a.string().required(),
     Key: a.string().required(),
