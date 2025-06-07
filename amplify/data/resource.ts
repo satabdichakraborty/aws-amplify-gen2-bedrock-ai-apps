@@ -10,6 +10,26 @@ and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
 
+  Question: a
+    .model({
+      QuestionId: a.string().required(),
+      Status: a.string(),
+      Key: a.string(),
+      Topic: a.string(),
+      Question: a.string().required(),
+      ResponseA: a.string(),
+      ResponseB: a.string(),
+      ResponseC: a.string(),
+      ResponseD: a.string(),
+      ResponseE: a.string(),
+      ResponseF: a.string(),
+      LastEditedDate: a.string(),
+      Owner: a.string(),
+      WordCount: a.integer(),
+    })
+    .identifier(['QuestionId'])
+    .authorization((allow) => [allow.authenticated()]),
+
   genericAPIResponse: a.customType({
     content: a.string()
   }),
