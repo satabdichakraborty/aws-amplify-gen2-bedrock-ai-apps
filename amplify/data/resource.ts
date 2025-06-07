@@ -1,6 +1,7 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 import { instagramCaptionsGenerator } from '../functions/instagram-captions-generator/resource';
 import { textRephraser } from '../functions/text-rephraser/resource';
+import { questionSchema } from './schema-updates';
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -9,6 +10,7 @@ specifies that any unauthenticated user can "create", "read", "update",
 and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
+  ...questionSchema,
 
   genericAPIResponse: a.customType({
     content: a.string()
