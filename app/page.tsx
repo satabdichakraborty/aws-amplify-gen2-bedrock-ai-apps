@@ -1,32 +1,52 @@
+"use client"
+
 import { AppConstants } from "@/utils/AppConstants";
-import { LayoutGridIcon, SparklesIcon } from "lucide-react";
 import Link from "next/link";
+import Container from "@cloudscape-design/components/container";
+import Header from "@cloudscape-design/components/header";
+import Box from "@cloudscape-design/components/box";
+import SpaceBetween from "@cloudscape-design/components/space-between";
+import ColumnLayout from "@cloudscape-design/components/column-layout";
+import Icon from "@cloudscape-design/components/icon";
 
 export default function Home() {
   return (
-    <div className="flex-grow bg-gray-100 px-6 sm:px-16 py-8">
-
-      <div className="flex flex-col items-center">
-        <h1 className="text-4xl font-bold text-gray-800 my-8">AI Tools!</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 px-4">
-          {
-            AppConstants.Apps.map((app, index) => (
-
-              <Link href={app.path} key={index}>
-                <div className="flex items-center bg-white shadow-md rounded-lg p-4">
-                  <div className="mr-4">
-                    <LayoutGridIcon className="h-10 w-10 animate-pulse" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium text-purple-800 hover:text-purple-600">{app.title}</h3>
-                    <p className="text-gray-600 text-sm">{app.description}</p>
-                  </div>
-                </div>
+    <Box padding="l" className="flex-grow">
+      <Container
+        header={
+          <Header variant="h1">
+            AI Tools!
+          </Header>
+        }
+      >
+        <SpaceBetween size="l">
+          <Box variant="p">
+            Explore our collection of AI-powered tools and services built with AWS Amplify Gen2 and Amazon Bedrock.
+          </Box>
+          
+          <ColumnLayout columns={3} variant="text-grid">
+            {AppConstants.Apps.map((app, index) => (
+              <Link href={app.path} key={index} style={{ textDecoration: 'none' }}>
+                <Container>
+                  <SpaceBetween size="s">
+                    <Box>
+                      <Icon name="folder" size="large" />
+                    </Box>
+                    <Box>
+                      <Box variant="h3">
+                        {app.title}
+                      </Box>
+                      <Box variant="p">
+                        {app.description}
+                      </Box>
+                    </Box>
+                  </SpaceBetween>
+                </Container>
               </Link>
-            ))
-          }
-        </div>
-      </div>
-    </div>
+            ))}
+          </ColumnLayout>
+        </SpaceBetween>
+      </Container>
+    </Box>
   );
 }

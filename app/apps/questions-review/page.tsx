@@ -4,26 +4,17 @@ import { Schema } from "@/amplify/data/resource";
 import { Authenticator } from "@aws-amplify/ui-react"
 import '@aws-amplify/ui-react/styles.css';
 import { generateClient } from "aws-amplify/data";
-import { Button } from "@/components/ui/button"
 import { AppConstants, AppNames } from "@/utils/AppConstants";
 import Link from "next/link";
-import { ArrowLeftCircle, Loader2, RefreshCw, Plus } from "lucide-react";
 import React from "react";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+import Container from "@cloudscape-design/components/container";
+import Header from "@cloudscape-design/components/header";
+import Table from "@cloudscape-design/components/table";
+import Button from "@cloudscape-design/components/button";
+import Box from "@cloudscape-design/components/box";
+import SpaceBetween from "@cloudscape-design/components/space-between";
+import Badge from "@cloudscape-design/components/badge";
+import Spinner from "@cloudscape-design/components/spinner";
 
 interface Question {
     QuestionId: string;
@@ -93,139 +84,175 @@ function QuestionsReviewComponent() {
         return responses.length > 0 ? responses.join(' | ') : 'No responses';
     };
 
-    // Get status badge color
-    const getStatusColor = (status?: string) => {
+    // Get status badge color for Cloudscape Badge
+    const getStatusBadgeColor = (status?: string): "blue" | "grey" | "green" | "red" => {
         switch (status?.toLowerCase()) {
-            case 'active': return 'text-green-600 bg-green-100';
-            case 'inactive': return 'text-gray-600 bg-gray-100';
-            case 'pending': return 'text-yellow-600 bg-yellow-100';
-            case 'archived': return 'text-red-600 bg-red-100';
-            default: return 'text-blue-600 bg-blue-100';
+            case 'active': return 'green';
+            case 'inactive': return 'grey';
+            case 'pending': return 'blue';
+            case 'archived': return 'red';
+            default: return 'blue';
         }
     };
 
     return (
-        <>
-            <Card className="w-full">
-                <CardHeader>
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <CardTitle>{AppNames.QUESTIONS_REVIEW}</CardTitle>
-                            <CardDescription>
-                                {AppConstants.Apps.find(item => item.title == AppNames.QUESTIONS_REVIEW)?.description}
-                            </CardDescription>
-                        </div>
-                        <div className="flex gap-2">
-                            <Button 
-                                variant="outline" 
-                                onClick={fetchQuestions}
-                                disabled={isLoading}
-                            >
-                                {isLoading ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                    <RefreshCw className="h-4 w-4" />
-                                )}
-                                Refresh
-                            </Button>
-                        </div>
-                    </div>
-                </CardHeader>
-                <CardContent>
+        <Container
+            header={
+                <Header
+                    variant="h2"
+                    description={AppConstants.Apps.find(item => item.title == AppNames.QUESTIONS_REVIEW)?.description}
+                    actions={
+                        <Button 
+                            onClick={fetchQuestions}
+                            disabled={isLoading}
+                            iconName="refresh"
+                        >
+                            {isLoading ? "Refreshing..." : "Refresh"}
+                        </Button>
+                    }
+                >
+                    {AppNames.QUESTIONS_REVIEW}
+                </Header>
+            }
+        >
                     {isLoading ? (
-                        <div className="flex justify-center items-center py-10">
-                            <Loader2 className="h-8 w-8 animate-spin" />
-                            <span className="ml-2">Loading questions...</span>
-                        </div>
+                        <Box textAlign="center" padding="xl">
+                            <SpaceBetween size="m" direction="vertical" alignItems="center">
+                                <Spinner size="large" />
+                                <Box>Loading questions...</Box>
+                            </SpaceBetween>
+                        </Box>
                     ) : questions.length === 0 ? (
-                        <div className="text-center py-10">
-                            <p className="text-gray-500 mb-4">No questions found in the database.</p>
-                            <p className="text-sm text-gray-400">
-                                Add some questions to the Question table in DynamoDB to see them here.
-                            </p>
-                        </div>
+                        <Box textAlign="center" padding="xl">
+                            <SpaceBetween size="s" direction="vertical">
+                                <Box variant="strong">No questions found in the database.</Box>
+                                <Box variant="small">
+                                    Add some questions to the Question table in DynamoDB to see them here.
+                                </Box>
+                            </SpaceBetween>
+                        </Box>
                     ) : (
-                        <div className="rounded-md border">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Question ID</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead>Topic</TableHead>
-                                        <TableHead>Question</TableHead>
-                                        <TableHead>Responses</TableHead>
-                                        <TableHead>Owner</TableHead>
-                                        <TableHead>Word Count</TableHead>
-                                        <TableHead>Last Edited</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {questions.map((question) => (
-                                        <TableRow key={question.QuestionId}>
-                                            <TableCell className="font-mono text-sm">
-                                                {question.QuestionId}
-                                            </TableCell>
-                                            <TableCell>
-                                                {question.Status ? (
-                                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(question.Status)}`}>
-                                                        {question.Status}
-                                                    </span>
-                                                ) : (
-                                                    'N/A'
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                {question.Topic || 'No topic'}
-                                            </TableCell>
-                                            <TableCell className="max-w-md">
-                                                <div className="truncate" title={question.Question}>
-                                                    {question.Question}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="max-w-sm">
-                                                <div className="truncate" title={formatResponses(question)}>
-                                                    {formatResponses(question)}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                {question.Owner || 'Unassigned'}
-                                            </TableCell>
-                                            <TableCell className="text-center">
-                                                {question.WordCount || 0}
-                                            </TableCell>
-                                            <TableCell>
-                                                {formatDate(question.LastEditedDate)}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
+                        <Table
+                            columnDefinitions={[
+                                {
+                                    id: "questionId",
+                                    header: "Question ID",
+                                    cell: (item: Question) => (
+                                        <Box>
+                                            <code style={{ fontSize: '0.875rem' }}>
+                                                {item.QuestionId}
+                                            </code>
+                                        </Box>
+                                    ),
+                                    sortingField: "QuestionId",
+                                    isRowHeader: true
+                                },
+                                {
+                                    id: "status",
+                                    header: "Status",
+                                    cell: (item: Question) => (
+                                        item.Status ? (
+                                            <Badge color={getStatusBadgeColor(item.Status)}>
+                                                {item.Status}
+                                            </Badge>
+                                        ) : (
+                                            <Box color="text-status-inactive">N/A</Box>
+                                        )
+                                    ),
+                                    sortingField: "Status"
+                                },
+                                {
+                                    id: "topic",
+                                    header: "Topic",
+                                    cell: (item: Question) => item.Topic || "No topic",
+                                    sortingField: "Topic"
+                                },
+                                {
+                                    id: "question",
+                                    header: "Question",
+                                    cell: (item: Question) => (
+                                        <div title={item.Question}>
+                                            {item.Question.length > 100 
+                                                ? `${item.Question.substring(0, 100)}...` 
+                                                : item.Question}
+                                        </div>
+                                    ),
+                                    sortingField: "Question"
+                                },
+                                {
+                                    id: "responses",
+                                    header: "Responses",
+                                    cell: (item: Question) => (
+                                        <div title={formatResponses(item)}>
+                                            {formatResponses(item).length > 50 
+                                                ? `${formatResponses(item).substring(0, 50)}...` 
+                                                : formatResponses(item)}
+                                        </div>
+                                    )
+                                },
+                                {
+                                    id: "owner",
+                                    header: "Owner",
+                                    cell: (item: Question) => item.Owner || "Unassigned",
+                                    sortingField: "Owner"
+                                },
+                                {
+                                    id: "wordCount",
+                                    header: "Word Count",
+                                    cell: (item: Question) => (
+                                        <Box textAlign="center">
+                                            {item.WordCount || 0}
+                                        </Box>
+                                    ),
+                                    sortingField: "WordCount"
+                                },
+                                {
+                                    id: "lastEdited",
+                                    header: "Last Edited",
+                                    cell: (item: Question) => formatDate(item.LastEditedDate),
+                                    sortingField: "LastEditedDate"
+                                }
+                            ]}
+                            items={questions}
+                            loading={isLoading}
+                            loadingText="Loading questions..."
+                            empty={
+                                <Box textAlign="center" color="inherit">
+                                    <SpaceBetween size="m">
+                                        <Box variant="strong" textAlign="center" color="inherit">
+                                            No questions
+                                        </Box>
+                                        <Box variant="p" textAlign="center" color="inherit">
+                                            No questions to display.
+                                        </Box>
+                                    </SpaceBetween>
+                                </Box>
+                            }
+                        />
                     )}
                     
-                    <div className="flex justify-between mt-6">
-                        <Button variant="outline" asChild>
-                            <Link href="/">
-                                <ArrowLeftCircle className="h-4 w-4 me-2" />
-                                Back to Apps
-                            </Link>
+            <Box padding={{ top: "l" }}>
+                <SpaceBetween direction="horizontal" size="xs" alignItems="center">
+                    <Link href="/" style={{ textDecoration: 'none' }}>
+                        <Button variant="link" iconName="arrow-left">
+                            Back to Apps
                         </Button>
-                        <div className="text-sm text-gray-500">
-                            Total Questions: {questions.length}
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-        </>
+                    </Link>
+                    <Box variant="small" color="text-status-inactive">
+                        Total Questions: {questions.length}
+                    </Box>
+                </SpaceBetween>
+            </Box>
+        </Container>
     );
 }
 
 export default function QuestionsReview() {
     return (
-        <div className="flex-grow bg-gray-100 px-6 sm:px-16 py-8">
+        <Box padding="l" className="flex-grow">
             <Authenticator>
                 <QuestionsReviewComponent />
             </Authenticator>
-        </div>
+        </Box>
     );
 } 

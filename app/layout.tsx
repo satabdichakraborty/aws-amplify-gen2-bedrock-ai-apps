@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import "@cloudscape-design/global-styles/index.css";
 import { Amplify } from 'aws-amplify';
 import outputs from "@/amplify_outputs.json";
 import ConfigureAmplifyClientSide from "../components/ConfigureAmplifyClientSide ";
