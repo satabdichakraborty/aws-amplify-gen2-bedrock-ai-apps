@@ -3,7 +3,7 @@ import { a } from '@aws-amplify/backend';
 // Define the Question type schema
 export const questionSchema = {
   Question: a.model({
-    QuestionId: a.string().required().primaryPartitionKey(),
+    QuestionId: a.string().required(),
     Status: a.string().required(),
     Type: a.string().required(),
     Key: a.string().required(),
@@ -19,7 +19,6 @@ export const questionSchema = {
     Owner: a.string(),
     WordCount: a.integer(),
   }).authorization((allow) => [
-    // Allow authenticated users to perform all operations
     allow.authenticated().to(['create', 'read', 'update', 'delete']),
   ]),
 };
